@@ -14,11 +14,12 @@
 	export let img_width: number;
 	export let img_height: number;
 	export let mode: "mask" | "other" = "other";
+	export let zoomed: boolean = false;
 
 	$: width = container_height * (img_width / img_height);
 </script>
 
-<div class="wrap">
+<div class="wrap" class:zoomed={zoomed}>
 	<span class="brush">
 		<IconButton
 			Icon={Brush}

@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
 	import { IconButton } from "@gradio/atoms";
-	import { Undo, Clear } from "@gradio/icons";
+	import { Undo, Clear, Edit } from "@gradio/icons";
 
 	const dispatch = createEventDispatcher();
+
+	export let zoomed: boolean = false;
 </script>
 
-<div>
+<div class:zoomed={zoomed}>
+	<IconButton Icon={Edit} label="Zoom" on:click={() => dispatch("zoom")} />
 	<IconButton Icon={Undo} label="Undo" on:click={() => dispatch("undo")} />
 	<IconButton
 		Icon={Clear}

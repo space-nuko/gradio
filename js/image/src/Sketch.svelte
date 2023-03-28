@@ -14,6 +14,7 @@
 	export let brush_color = "#0b0f19";
 	export let brush_radius;
 	export let source;
+	export let zoomed = false;
 
 	export let width = 400;
 	export let height = 200;
@@ -205,6 +206,12 @@
 		});
 	});
 
+    $: handle_zoom(zoomed);
+
+    function handle_zoom(zoomed) {
+
+    }
+
 	function init() {
 		const initX = width / 2;
 		const initY = height / 2;
@@ -392,9 +399,15 @@
 		const ctx = canvas.getContext("2d");
 		scale && ctx.scale(dpr, dpr);
 
-		canvas.style.width = `${container.width}px`;
-		canvas.style.height = `${container.height}px`;
-	};
+        if (!zoomed) {
+            canvas.style.width = `${container.width}px`;
+            canvas.style.height = `${container.height}px`;
+        }
+        else {
+            canvas.style.removeProperty("width");
+            canvas.style.removeProperty("height");
+        }
+    };
 
 	let get_pointer_pos = (e) => {
 		const rect = canvas.interface.getBoundingClientRect();
@@ -584,6 +597,7 @@
 
 <div
 	class="wrap"
+    class:zoomed={zoomed}
 	bind:this={canvas_container}
 	bind:offsetWidth={canvas_width}
 	bind:offsetHeight={canvas_height}
@@ -645,6 +659,15 @@
 		height: var(--size-full);
 		touch-action: none;
 	}
+
+ .wrap.zoomed {
+     position: fixed;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     z-index: var(--layer-1);
+ }
 
 	.start-prompt {
 		display: flex;

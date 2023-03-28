@@ -98,11 +98,19 @@
 
 	$: dispatch("drag", dragging);
 
+	let zoomed = false;
+
+	$: dispatch("zoom", zoomed);
+
 	function handle_image_load(event: Event) {
 		const element = event.currentTarget as HTMLImageElement;
 		img_width = element.naturalWidth;
 		img_height = element.naturalHeight;
 		container_height = element.getBoundingClientRect().height;
+	}
+
+	function handle_zoom(event: Event) {
+		zoomed = !zoomed;
 	}
 
 	async function handle_sketch_clear() {
@@ -186,6 +194,7 @@
 			bind:dragging
 			filetype="image/*"
 			on:load={handle_upload}
+			on:zoom={handle_zoom}
 			include_file_metadata={false}
 			disable_click={!!value}
 		>
@@ -215,15 +224,18 @@
 						alt=""
 						on:load={handle_image_load}
 						class:webcam={source === "webcam" && mirror_webcam}
+						class:zoomed
 					/>
 				{/key}
 				{#if img_width > 0}
+                    <div class:zoom-bg={zoomed} class:hidden={!zoomed}></div>
 					<Sketch
 						{value}
 						bind:this={sketch}
 						bind:brush_radius
 						bind:brush_color
 						on:change={handle_save}
+						{zoomed}
 						{mode}
 						width={img_width || max_width}
 						height={img_height || max_height}
@@ -235,6 +247,8 @@
 					<ModifySketch
 						on:undo={() => sketch.undo()}
 						on:clear={handle_sketch_clear}
+                        on:zoom={() => zoomed = !zoomed}
+						{zoomed}
 					/>
 					{#if tool === "color-sketch" || tool === "sketch"}
 						<SketchSettings
@@ -244,6 +258,7 @@
 							img_width={img_width || max_width}
 							img_height={img_height || max_height}
 							{mode}
+							{zoomed}
 						/>
 					{/if}
 				{/if}
@@ -360,7 +375,7 @@
 
 <style>
 	.fixed-height {
-		height: var(--size-60);
+		height: 100%;
 	}
 
 	img {
@@ -377,4 +392,8 @@
 	.webcam {
 		transform: scaleX(-1);
 	}
+
+    .hidden {
+		display: none;
+    }
 </style>
