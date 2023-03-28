@@ -286,6 +286,9 @@
 					)
 				)
 				.then((v: []) => {
+                    if (v === undefined) {
+                        v = [];
+                    }
 					if (dep.backend_fn) {
 						payload.data = v;
 						make_prediction();
